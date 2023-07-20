@@ -1,20 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {useEffect, useState} from 'react'
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { Label, List, Button } from './components'
+import { fetchData} from "./lib/Generic";
+import Backdrop from "./components/Backdrop";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+const App = () => {
+
+  const [data, setData] = useState([])
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  const url = "https://api.dev-master.ninja/reactjs/slow"
+
+  useEffect(() => {
+    fetchData(url)
+      .then( result => {
+        setData(result)
+        setIsLoaded(true)
+      })
+  },[])
+
+  return(
+    <View style={{ flex:1, marginTop: 0, padding: 0 }}>
+      <View style={{ flex: 2}}>
+        <Backdrop />
+      </View>
+      <View style={{ flex: 4}}>
+      {
+        !isLoaded ? <ActivityIndicator size="large" color="#0000ff" />
+          : <List data={data} />
+      }
+      </View>
     </View>
-  );
+  )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App
+
+
